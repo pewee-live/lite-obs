@@ -118,7 +118,7 @@ public class QueryURLBuilder {
      * 这里群晖源码采用双引号方式来处理文件名当文件中有特殊字符会导致群晖报119错误
      * 具体信息参考buildDownloadQuery 
      * 在最新改造中我们判断群晖返回-119会去刷新_sid再递归执行逻辑会导致死循环
-     * 股这里处理逻辑与下载一致
+     * 故这里处理逻辑与下载一致
      * 
      * @param files
      * @return

@@ -255,9 +255,19 @@ bdpan.backUrl=[https://myurl.com:50000/obs/bdpan/token](https://myurl.com:50000/
 
 
 
-## 4. API详细指南
+##  API详细指南
 
 见[OBS微服务接口文档.md](OBS微服务接口文档.md)
+
+## 致谢 (Acknowledgements)
+
+`lite-obs` 的部分功能实现参考或直接使用了以下项目的源码，特此感谢所有原作者的贡献：
+
+* **[群晖java客户端]**
+    * **项目/来源**: [SynoFileStationClient]
+    * **作者**: [heavyrage] 
+    * **源码链接**: `[https://github.com/heavyrage/SynoFileStationClient]`
+
 
 ## 许可证
 本项目采用[LICENSE](LICENSE) 

@@ -366,53 +366,6 @@ public class SynoRestClient implements SynoRestClientIface {
     		return false;
     	}
     	return fileStationInfoQuery();
-    }
-    
-    public static void main(String[] args) throws NasCompatibilityException, NasAuthenticationFailureException, IOException, InterruptedException {
-//        QueryURLBuilder builder = new QueryURLBuilder();
-//        builder.setBaseURL("http://192.168.7.111:5000/");
-//        RestTemplate nasClientRestTemplate = new RestTemplate();
-//        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-//        converter.setSupportedMediaTypes(Arrays.asList(MediaType.ALL, MediaType.APPLICATION_OCTET_STREAM));
-//        messageConverters.add(converter);
-//
-//        ByteArrayHttpMessageConverter byteArrayConverter = new ByteArrayHttpMessageConverter();
-//        byteArrayConverter.setSupportedMediaTypes(Arrays.asList(MediaType.ALL, MediaType.APPLICATION_OCTET_STREAM));
-//        messageConverters.add(byteArrayConverter);
-//
-//        nasClientRestTemplate.setMessageConverters(messageConverters);
-//        SynoRestClient client = new SynoRestClient(nasClientRestTemplate,builder);
-//        client.init();
-//        client.authenticate("admin","P@ssw0rd671245!");
-//
-//        String sid = builder.getUserSession().getSid();
-//        System.out.println(sid);
-
-        //上载文件
-//        File file = new File("D:\\workspace\\upload-nas\\src\\main\\resources\\1.pdf");
-//        FileInputStream fileInputStream = new FileInputStream(file);
-//        byte[] arr = new byte[fileInputStream.available()];
-//        fileInputStream.read(arr,0,arr.length);
-//        NasResponse nasResponse = client.uploadFile("54321", "/obs/system_no_00003/20220419", arr);
-//        System.out.println(nasResponse);
-
-        //创建下载链接
-//        List<String> filePaths = Arrays.asList("/obs/test/4.pdf","/obs/test/5.pdf");
-//        List<String> sharingUrls = client.createSharingUrls(filePaths);
-//        System.out.println(sharingUrls);
-
-        //直接下载文件
-//        String filePath = "/obs/TEST/20220421/548545953548734464";
-//        InputStream inputStream = client.downFile(filePath);
-//        int available = inputStream.available();
-//        System.out.println(available);
-//
-//        Thread.sleep(10 * 1000);
-//        if (inputStream != null){
-//            inputStream.close();
-//        }
-    }
-
+    }   
 	
 }
