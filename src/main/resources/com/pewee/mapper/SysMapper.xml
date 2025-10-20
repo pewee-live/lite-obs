@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pewee.mapper.SysMapper">
+
+    <resultMap type="com.pewee.bean.Sys" id="SysResult">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="enabled" column="enabled"/>
+        <result property="sysName" column="sys_name"/>
+        <result property="sysAlias" column="sys_alias"/>
+        <result property="secret" column="secret"/>
+    </resultMap>
+
+    <sql id="selectSysVo">
+        select id, code, create_time, update_time, enabled, sys_name, sys_alias, secret from tbl_sys
+    </sql>
+
+    <select id="selectSysList" parameterType="com.pewee.bean.Sys" resultMap="SysResult">
+        <include refid="selectSysVo"/>
+        <where>
+            <if test="code != null  and code != ''">and code = #{code}</if>
+            <if test="enabled != null ">and enabled = #{enabled}</if>
+            <if test="sysName != null  and sysName != ''">and sys_name like concat('%', #{sysName}, '%')</if>
+            <if test="sysAlias != null  and sysAlias != ''">and sys_alias = #{sysAlias}</if>
+            <if test="secret != null  and secret != ''">and secret = #{secret}</if>
+        </where>
+    </select>
+
+    <select id="selectSysById" parameterType="Long" resultMap="SysResult">
+        <include refid="selectSysVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSysByCode" parameterType="java.lang.String" resultMap="SysResult">
+        <include refid="selectSysVo"/>
+        where code = #{code}
+    </select>
+
+    <insert id="insertSys" parameterType="com.pewee.bean.Sys" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_sys
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="enabled != null">enabled,</if>
+            <if test="sysName != null and sysName != ''">sys_name,</if>
+            <if test="sysAlias != null and sysAlias != ''">sys_alias,</if>
+            <if test="secret != null and secret != ''">secret,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">#{code},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="enabled != null">#{enabled},</if>
+            <if test="sysName != null and sysName != ''">#{sysName},</if>
+            <if test="sysAlias != null and sysAlias != ''">#{sysAlias},</if>
+            <if test="secret != null and secret != ''">#{secret},</if>
+        </trim>
+    </insert>
+
+    <insert id="insertSysListSelective" parameterType="java.util.List">
+        <foreach collection="list" item="data" separator=";">
+            insert into tbl_sys
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="data.code != null and data.code != ''">code,</if>
+                <if test="data.createTime != null">create_time,</if>
+                <if test="data.updateTime != null">update_time,</if>
+                <if test="data.enabled != null">enabled,</if>
+                <if test="data.sysName != null and data.sysName != ''">sys_name,</if>
+                <if test="data.sysAlias != null and data.sysAlias != ''">sys_alias,</if>
+                <if test="data.secret != null and data.secret != ''">secret,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="data.code != null and data.code != ''">#{data.code},</if>
+                <if test="data.createTime != null">#{data.createTime},</if>
+                <if test="data.updateTime != null">#{data.updateTime},</if>
+                <if test="data.enabled != null">#{data.enabled},</if>
+                <if test="data.sysName != null and data.sysName != ''">#{data.sysName},</if>
+                <if test="data.sysAlias != null and data.sysAlias != ''">#{data.sysAlias},</if>
+                <if test="data.secret != null and data.secret != ''">#{data.secret},</if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateSys" parameterType="com.pewee.bean.Sys">
+        update tbl_sys
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="enabled != null">enabled = #{enabled},</if>
+            <if test="sysName != null and sysName != ''">sys_name = #{sysName},</if>
+            <if test="sysAlias != null and sysAlias != ''">sys_alias = #{sysAlias},</if>
+            <if test="secret != null and secret != ''">secret = #{secret},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateSysListSelectiveByCode" parameterType="java.util.List">
+        <foreach collection="list" item="data" separator=";">
+            update tbl_sys
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="data.code != null and data.code != ''">code = #{data.code},</if>
+                <if test="data.createTime != null">create_time = #{data.createTime},</if>
+                <if test="data.updateTime != null">update_time = #{data.updateTime},</if>
+                <if test="data.enabled != null">enabled = #{data.enabled},</if>
+                <if test="data.sysName != null and data.sysName != ''">sys_name = #{data.sysName},</if>
+                <if test="data.sysAlias != null and data.sysAlias != ''">sys_alias = #{data.sysAlias},</if>
+                <if test="data.secret != null and data.secret != ''">secret = #{data.secret},</if>
+            </trim>
+            where code = #{data.code}
+        </foreach>
+    </update>
+
+    <delete id="deleteSysById" parameterType="Long">
+        delete from tbl_sys where id = #{id}
+    </delete>
+
+    <delete id="deleteSysByIds" parameterType="String">
+        delete from tbl_sys where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectSysByCodeAndSecret" parameterType="String" resultMap="SysResult">
+        <include refid="selectSysVo"/>
+        where code = #{code} and secret = #{secret}
+    </select>
+</mapper>

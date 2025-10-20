@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pewee.mapper.LogicFileMapper">
+    
+    <resultMap type="com.pewee.bean.LogicFile" id="LogicFileResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="mimeType"    column="mime_type"    />
+        <result property="length"    column="length"    />
+        <result property="split"    column="split"    />
+        <result property="total"    column="total"    />
+        <result property="crc32"    column="crc32"    />
+        <result property="sysCode"    column="sys_code"    />
+        <result property="sysAlisa"    column="sys_alisa"    />
+        <result property="status"    column="status"    />
+        <result property="expire"    column="expire"    />
+    </resultMap>
+
+    <sql id="selectLogicFileVo">
+        select id, code, create_time, update_time, file_name, mime_type, length, split, total, crc32, sys_code, sys_alisa, status, expire from tbl_logic_file
+    </sql>
+
+    <select id="selectLogicFileList" parameterType="com.pewee.bean.LogicFile" resultMap="LogicFileResult">
+        <include refid="selectLogicFileVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="mimeType != null  and mimeType != ''"> and mime_type = #{mimeType}</if>
+            <if test="length != null "> and length = #{length}</if>
+            <if test="split != null "> and split = #{split}</if>
+            <if test="total != null "> and total = #{total}</if>
+            <if test="crc32 != null  and crc32 != ''"> and crc32 = #{crc32}</if>
+            <if test="sysCode != null  and sysCode != ''"> and sys_code = #{sysCode}</if>
+            <if test="sysAlisa != null  and sysAlisa != ''"> and sys_alisa = #{sysAlisa}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="expire != null "> and expire = #{expire}</if>
+        </where>
+    </select>
+    
+    <select id="selectLogicFileById" parameterType="Long" resultMap="LogicFileResult">
+        <include refid="selectLogicFileVo"/>
+        where id = #{id}
+    </select>
+    
+    <select id="selectLogicFileByCode" parameterType="java.lang.String" resultMap="LogicFileResult">
+        <include refid="selectLogicFileVo"/>
+        where code = #{code}  and status != 3
+    </select>
+        
+    <insert id="insertLogicFile" parameterType="com.pewee.bean.LogicFile" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_logic_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="mimeType != null and mimeType != ''">mime_type,</if>
+            <if test="length != null">length,</if>
+            <if test="split != null">split,</if>
+            <if test="total != null">total,</if>
+            <if test="crc32 != null and crc32 != ''">crc32,</if>
+            <if test="sysCode != null and sysCode != ''">sys_code,</if>
+            <if test="sysAlisa != null and sysAlisa != ''">sys_alisa,</if>
+            <if test="status != null">status,</if>
+            <if test="expire != null">expire,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">#{code},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="mimeType != null and mimeType != ''">#{mimeType},</if>
+            <if test="length != null">#{length},</if>
+            <if test="split != null">#{split},</if>
+            <if test="total != null">#{total},</if>
+            <if test="crc32 != null and crc32 != ''">#{crc32},</if>
+            <if test="sysCode != null and sysCode != ''">#{sysCode},</if>
+            <if test="sysAlisa != null and sysAlisa != ''">#{sysAlisa},</if>
+            <if test="status != null">#{status},</if>
+            <if test="expire != null">#{expire},</if>
+         </trim>
+    </insert>
+    
+    <insert id="insertLogicFileListSelective" parameterType="java.util.List">
+      <foreach collection="list" item="data" separator=";">
+        insert into tbl_logic_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="data.code != null and data.code != ''">code,</if>
+            <if test="data.createTime != null">create_time,</if>
+            <if test="data.updateTime != null">update_time,</if>
+            <if test="data.fileName != null and data.fileName != ''">file_name,</if>
+            <if test="data.mimeType != null and data.mimeType != ''">mime_type,</if>
+            <if test="data.length != null">length,</if>
+            <if test="data.split != null">split,</if>
+            <if test="data.total != null">total,</if>
+            <if test="data.crc32 != null and data.crc32 != ''">crc32,</if>
+            <if test="data.sysCode != null and data.sysCode != ''">sys_code,</if>
+            <if test="data.sysAlisa != null and data.sysAlisa != ''">sys_alisa,</if>
+            <if test="data.status != null">status,</if>
+            <if test="data.expire != null">expire,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="data.code != null and data.code != ''">#{data.code},</if>
+            <if test="data.createTime != null">#{data.createTime},</if>
+            <if test="data.updateTime != null">#{data.updateTime},</if>
+            <if test="data.fileName != null and data.fileName != ''">#{data.fileName},</if>
+            <if test="data.mimeType != null and data.mimeType != ''">#{data.mimeType},</if>
+            <if test="data.length != null">#{data.length},</if>
+            <if test="data.split != null">#{data.split},</if>
+            <if test="data.total != null">#{data.total},</if>
+            <if test="data.crc32 != null and data.crc32 != ''">#{data.crc32},</if>
+            <if test="data.sysCode != null and data.sysCode != ''">#{data.sysCode},</if>
+            <if test="data.sysAlisa != null and data.sysAlisa != ''">#{data.sysAlisa},</if>
+            <if test="data.status != null">#{data.status},</if>
+            <if test="data.expire != null">#{data.expire},</if>
+         </trim>
+       </foreach>  
+    </insert>
+
+    <update id="updateLogicFile" parameterType="com.pewee.bean.LogicFile">
+        update tbl_logic_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="mimeType != null and mimeType != ''">mime_type = #{mimeType},</if>
+            <if test="length != null">length = #{length},</if>
+            <if test="split != null">split = #{split},</if>
+            <if test="total != null">total = #{total},</if>
+            <if test="crc32 != null and crc32 != ''">crc32 = #{crc32},</if>
+            <if test="sysCode != null and sysCode != ''">sys_code = #{sysCode},</if>
+            <if test="sysAlisa != null and sysAlisa != ''">sys_alisa = #{sysAlisa},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="expire != null">expire = #{expire},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    
+    <update id="updateLogicFileListSelectiveByCode" parameterType="java.util.List">
+       <foreach collection="list" item="data" separator=";">
+        update tbl_logic_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="data.code != null and data.code != ''">code = #{data.code},</if>
+            <if test="data.createTime != null">create_time = #{data.createTime},</if>
+            <if test="data.updateTime != null">update_time = #{data.updateTime},</if>
+            <if test="data.fileName != null and data.fileName != ''">file_name = #{data.fileName},</if>
+            <if test="data.mimeType != null and data.mimeType != ''">mime_type = #{data.mimeType},</if>
+            <if test="data.length != null">length = #{data.length},</if>
+            <if test="data.split != null">split = #{data.split},</if>
+            <if test="data.total != null">total = #{data.total},</if>
+            <if test="data.crc32 != null and data.crc32 != ''">crc32 = #{data.crc32},</if>
+            <if test="data.sysCode != null and data.sysCode != ''">sys_code = #{data.sysCode},</if>
+            <if test="data.sysAlisa != null and data.sysAlisa != ''">sys_alisa = #{data.sysAlisa},</if>
+            <if test="data.status != null">status = #{data.status},</if>
+            <if test="data.expire != null">expire = #{data.expire},</if>
+        </trim>
+        where code =  #{data.code}
+        </foreach>  
+    </update>
+
+    <delete id="deleteLogicFileById" parameterType="Long">
+        delete from tbl_logic_file where id = #{id}
+    </delete>
+
+    <delete id="deleteLogicFileByIds" parameterType="String">
+        delete from tbl_logic_file where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="logicallyDeleteLogicFileByCodes" parameterType="java.util.List">
+        update tbl_logic_file set status = 3 where code in
+        <foreach collection="codes" item = "code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </update>
+
+    <select id="selectLogicFileListByCodes" parameterType="java.util.List" resultMap="LogicFileResult">
+        <include refid="selectLogicFileVo"/>
+        <where>
+            code in
+            <foreach collection="codes" item = "code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </where>
+    </select>
+    
+</mapper>

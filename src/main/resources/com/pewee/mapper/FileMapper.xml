@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pewee.mapper.FileMapper">
+    
+    <resultMap type="com.pewee.bean.File" id="FileResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="storageType"    column="storage_type"    />
+        <result property="engineNamespace"    column="engine_namespace"    />
+        <result property="length"    column="length"    />
+        <result property="batchCode"    column="batch_code"    />
+        <result property="crc32"    column="crc32"    />
+        <result property="sequence"    column="sequence"    />
+        <result property="token"    column="token"    />
+        <result property="sysCode"    column="sys_code"    />
+    </resultMap>
+
+    <sql id="selectFileVo">
+        select id, code, create_time, update_time,storage_type, engine_namespace, length, batch_code, crc32, sequence, token, sys_code from tbl_file
+    </sql>
+
+    <select id="selectFileList" parameterType="com.pewee.bean.File" resultMap="FileResult">
+        <include refid="selectFileVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="storageType != null"> and storage_type = #{storageType}</if>
+            <if test="engineNamespace != null  and engineNamespace != ''"> and engine_namespace = #{engineNamespace}</if>
+            <if test="length != null "> and length = #{length}</if>
+            <if test="batchCode != null  and batchCode != ''"> and batch_code = #{batchCode}</if>
+            <if test="crc32 != null  and crc32 != ''"> and crc32 = #{crc32}</if>
+            <if test="sequence != null "> and sequence = #{sequence}</if>
+            <if test="token != null  and token != ''"> and token = #{token}</if>
+            <if test="sysCode != null  and token != ''"> and sys_code = #{sysCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectFileById" parameterType="Long" resultMap="FileResult">
+        <include refid="selectFileVo"/>
+        where id = #{id}
+    </select>
+    
+    <select id="selectFileByCode" parameterType="java.lang.String" resultMap="FileResult">
+        <include refid="selectFileVo"/>
+        where code = #{code}
+    </select>
+        
+    <insert id="insertFile" parameterType="com.pewee.bean.File" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="storageType != null">storage_type,</if>
+            <if test="engineNamespace != null  and engineNamespace != ''">engine_namespace,</if>
+            <if test="length != null">length,</if>
+            <if test="batchCode != null and batchCode != ''">batch_code,</if>
+            <if test="crc32 != null and crc32 != ''">crc32,</if>
+            <if test="sequence != null">sequence,</if>
+            <if test="token != null and token != ''">token,</if>
+            <if test="sysCode != null and sysCode != ''">sys_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">#{code},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="storageType != null">#{storageType},</if>
+            <if test="engineNamespace != null  and engineNamespace != ''">#{engineNamespace},</if>
+            <if test="length != null">#{length},</if>
+            <if test="batchCode != null and batchCode != ''">#{batchCode},</if>
+            <if test="crc32 != null and crc32 != ''">#{crc32},</if>
+            <if test="sequence != null">#{sequence},</if>
+            <if test="token != null and token != ''">#{token},</if>
+            <if test="sysCode != null and sysCode != ''">#{sysCode}</if>
+         </trim>
+    </insert>
+    
+    <insert id="insertFileListSelective" parameterType="java.util.List">
+      <foreach collection="list" item="data" separator=";">
+        insert into tbl_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="data.code != null and data.code != ''">code,</if>
+            <if test="data.createTime != null">create_time,</if>
+            <if test="data.updateTime != null">update_time,</if>
+            <if test="data.storageType != null">storage_type,</if>
+            <if test="data.engineNamespace != null  and data.engineNamespace != ''">engine_namespace,</if>
+            <if test="data.length != null">length,</if>
+            <if test="data.batchCode != null and data.batchCode != ''">batch_code,</if>
+            <if test="data.crc32 != null and data.crc32 != ''">crc32,</if>
+            <if test="data.sequence != null">sequence,</if>
+            <if test="data.token != null and data.token != ''">token,</if>
+            <if test="data.sysCode != null and data.sysCode != ''">sys_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="data.code != null and data.code != ''">#{data.code},</if>
+            <if test="data.createTime != null">#{data.createTime},</if>
+            <if test="data.updateTime != null">#{data.updateTime},</if>
+            <if test="data.storageType != null">#{data.storageType},</if>
+            <if test="data.engineNamespace != null  and data.engineNamespace != ''">#{data.engineNamespace},</if>
+            <if test="data.length != null">#{data.length},</if>
+            <if test="data.batchCode != null and data.batchCode != ''">#{data.batchCode},</if>
+            <if test="data.crc32 != null and data.crc32 != ''">#{data.crc32},</if>
+            <if test="data.sequence != null">#{data.sequence},</if>
+            <if test="data.token != null and data.token != ''">#{data.token},</if>
+            <if test="data.sysCode != null and data.sysCode != ''">#{data.sysCode}</if>
+         </trim>
+       </foreach>  
+    </insert>
+
+    <update id="updateFile" parameterType="com.pewee.bean.File">
+        update tbl_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="storageType != null">storage_type = #{storageType},</if>
+            <if test="engineNamespace != null  and engineNamespace != ''">engine_namespace = #{engineNamespace},</if>
+            <if test="length != null">length = #{length},</if>
+            <if test="batchCode != null and batchCode != ''">batch_code = #{batchCode},</if>
+            <if test="crc32 != null and crc32 != ''">crc32 = #{crc32},</if>
+            <if test="sequence != null">sequence = #{sequence},</if>
+            <if test="token != null and token != ''">token = #{token},</if>
+            <if test="sysCode != null and sysCode != ''">sys_code = #{sysCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    
+    <update id="updateFileListSelectiveByCode" parameterType="java.util.List">
+       <foreach collection="list" item="data" separator=";">
+        update tbl_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="data.code != null and data.code != ''">code = #{data.code},</if>
+            <if test="data.createTime != null">create_time = #{data.createTime},</if>
+            <if test="data.updateTime != null">update_time = #{data.updateTime},</if>
+            <if test="data.storageType != null">storage_type = #{data.storageType},</if>
+            <if test="data.engineNamespace != null  and data.engineNamespace != ''">engine_namespace = #{data.engineNamespace},</if>
+            <if test="data.length != null">length = #{data.length},</if>
+            <if test="data.batchCode != null and data.batchCode != ''">batch_code = #{data.batchCode},</if>
+            <if test="data.crc32 != null and data.crc32 != ''">crc32 = #{data.crc32},</if>
+            <if test="data.sequence != null">sequence = #{data.sequence},</if>
+            <if test="data.token != null and data.token != ''">token = #{data.token},</if>
+            <if test="data.sysCode != null and data.sysCode != ''">sys_code = #{data.sysCode},</if>
+        </trim>
+        where code =  #{data.code}
+        </foreach>  
+    </update>
+
+    <delete id="deleteFileById" parameterType="Long">
+        delete from tbl_file where id = #{id}
+    </delete>
+
+    <delete id="deleteFileByIds" >
+        delete from tbl_file where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectFileListByBatchCodes" parameterType="String" resultMap="FileResult">
+        <include refid="selectFileVo"/>
+        <where>
+            batch_code in
+            <foreach collection="batchCodes" item = "batchCode" open="(" separator="," close=")">
+                #{batchCode}
+            </foreach>
+        </where>
+    </select>
+    
+</mapper>
