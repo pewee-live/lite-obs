@@ -166,7 +166,7 @@ public abstract class EngineDefinition implements EngineAccess{
 	        //将logicFileJson通过base64进行编码
 	        StringBuilder sb = new StringBuilder("");
 	        String info = Base64Utils.encodeToUrlSafeString(logicFileJson.getBytes(java.nio.charset.Charset.forName("UTF-8")));
-	        sb.append("http://" + ip +  ":" + getPort() + "/pewee/logicfile/download/part/" 
+	        sb.append("http://" + ip +  ":" + getPort() + "/obs/logicfile/download/part/" 
 	        + getDynamicLink().generateDynamicLink(f.getCode()) + "?");
 	        if(0 == logicFile.getSplit()) {
 	        	sb.append("info=" + info);

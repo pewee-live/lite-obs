@@ -108,20 +108,25 @@ spring.redis.password=000000
 obs.defaultType=1
 
 # --- 群晖 NAS (synologyEngine) ---
-nas.authList[0].namespace=my-synology0
-nas.authList[0].url=[http://192.168.1.111:5000/](http://192.168.1.111:5000/)
-nas.authList[0].user=YOUR_NAS_USER
-nas.authList[0].auth=YOUR_NAS_PASSWORD
+synologynas.authList[0].namespace=my-synology0
+synologynas.authList[0].url=http://192.168.1.111:5000/
+synologynas.authList[0].user=YOUR_NAS_USER
+synologynas.authList[0].auth=YOUR_NAS_PASSWORD
+
+synologynas.authList[1].namespace=test1
+synologynas.authList[1].url=http://192.168.1.3:5000/
+synologynas.authList[1].user=bbb
+synologynas.authList[1].auth=456
 
 # --- 七牛云 (qiniuEngine) ---
-sevenniu.ak=YOUR_QINIU_ACCESS_KEY
-sevenniu.sk=YOUR_QINIU_SECRET_KEY
+qiniu.ak=YOUR_QINIU_ACCESS_KEY
+qiniu.sk=YOUR_QINIU_SECRET_KEY
 
 # --- 百度网盘 (bdpanEngine) ---
 bdpan.appid=YOUR_BAIDU_APP_ID
 bdpan.appkey=YOUR_BAIDU_APP_KEY
 bdpan.secretkey=YOUR_BAIDU_SECRET_KEY
-bdpan.backUrl=[https://myurl.com:50000/obs/bdpan/token](https://myurl.com:50000/obs/bdpan/token)
+bdpan.backUrl=https://myurl.com:50000/obs/bdpan/token
 
 
 ```

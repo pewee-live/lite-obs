@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  * 2.SynoRestClient 改为由NasEngine来配置启动(com.pewee.bean.nas.api.helper.QueryURLBuilder的NASURL改造及UserSession中key的改造)
  * 3.关于不同NAS中获取Session的锁改造
  * 4.NasEngine在做文件相关处理时,会优先选择NAS配置中prefer=true的那个配置来做IO操作;
- * 5.在tbl_logic_file中添加engine_namespace的字段用于标识当前storage_type下选取的engine_namespace,目前默认值为it-kf
+ * 5.在tbl_file中添加engine_namespace的字段用于标识当前storage_type下选取的engine_namespace,当文件上传时,根据上传者账号进行存储实例的选择
  * 
  * 6.202508对上述第4条进行优化,将会优先选择syscode配置的namespace实例来做IO操作,如果该账号没有做任何配置,则进行4的处理逻辑
  * @author pewee
