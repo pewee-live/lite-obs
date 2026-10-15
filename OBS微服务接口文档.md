@@ -538,7 +538,7 @@ Array[String]
 - URI
 
   ```
-  GET  /opto/logicfile/queryDownloadInfo/{filecode}
+  GET  /obs/logicfile/queryDownloadInfo/{filecode}
   
   - 请求消息头
 
