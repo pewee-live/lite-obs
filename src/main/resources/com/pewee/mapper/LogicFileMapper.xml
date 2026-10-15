@@ -15,6 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="split"    column="split"    />
         <result property="total"    column="total"    />
         <result property="crc32"    column="crc32"    />
+        <result property="md5"    column="md5"    />
         <result property="sysCode"    column="sys_code"    />
         <result property="sysAlisa"    column="sys_alisa"    />
         <result property="status"    column="status"    />
@@ -22,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectLogicFileVo">
-        select id, code, create_time, update_time, file_name, mime_type, length, split, total, crc32, sys_code, sys_alisa, status, expire from tbl_logic_file
+        select id, code, create_time, update_time, file_name, mime_type, length, split, total, crc32, md5, sys_code, sys_alisa, status, expire from tbl_logic_file
     </sql>
 
     <select id="selectLogicFileList" parameterType="com.pewee.bean.LogicFile" resultMap="LogicFileResult">
@@ -35,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="split != null "> and split = #{split}</if>
             <if test="total != null "> and total = #{total}</if>
             <if test="crc32 != null  and crc32 != ''"> and crc32 = #{crc32}</if>
+            <if test="md5 != null  and md5 != ''"> and md5 = #{md5}</if>
             <if test="sysCode != null  and sysCode != ''"> and sys_code = #{sysCode}</if>
             <if test="sysAlisa != null  and sysAlisa != ''"> and sys_alisa = #{sysAlisa}</if>
             <if test="status != null "> and status = #{status}</if>
@@ -64,6 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="split != null">split,</if>
             <if test="total != null">total,</if>
             <if test="crc32 != null and crc32 != ''">crc32,</if>
+            <if test="md5 != null and md5 != ''">md5,</if>
             <if test="sysCode != null and sysCode != ''">sys_code,</if>
             <if test="sysAlisa != null and sysAlisa != ''">sys_alisa,</if>
             <if test="status != null">status,</if>
@@ -79,6 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="split != null">#{split},</if>
             <if test="total != null">#{total},</if>
             <if test="crc32 != null and crc32 != ''">#{crc32},</if>
+            <if test="md5 != null and md5 != ''">#{md5},</if>
             <if test="sysCode != null and sysCode != ''">#{sysCode},</if>
             <if test="sysAlisa != null and sysAlisa != ''">#{sysAlisa},</if>
             <if test="status != null">#{status},</if>
@@ -99,6 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="data.split != null">split,</if>
             <if test="data.total != null">total,</if>
             <if test="data.crc32 != null and data.crc32 != ''">crc32,</if>
+            <if test="data.md5 != null and data.md5 != ''">md5,</if>
             <if test="data.sysCode != null and data.sysCode != ''">sys_code,</if>
             <if test="data.sysAlisa != null and data.sysAlisa != ''">sys_alisa,</if>
             <if test="data.status != null">status,</if>
@@ -114,6 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="data.split != null">#{data.split},</if>
             <if test="data.total != null">#{data.total},</if>
             <if test="data.crc32 != null and data.crc32 != ''">#{data.crc32},</if>
+            <if test="data.md5 != null and data.md5 != ''">#{data.md5},</if>
             <if test="data.sysCode != null and data.sysCode != ''">#{data.sysCode},</if>
             <if test="data.sysAlisa != null and data.sysAlisa != ''">#{data.sysAlisa},</if>
             <if test="data.status != null">#{data.status},</if>
@@ -134,6 +140,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="split != null">split = #{split},</if>
             <if test="total != null">total = #{total},</if>
             <if test="crc32 != null and crc32 != ''">crc32 = #{crc32},</if>
+            <if test="md5 != null and md5 != ''">md5 = #{md5},</if>
             <if test="sysCode != null and sysCode != ''">sys_code = #{sysCode},</if>
             <if test="sysAlisa != null and sysAlisa != ''">sys_alisa = #{sysAlisa},</if>
             <if test="status != null">status = #{status},</if>
@@ -155,6 +162,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="data.split != null">split = #{data.split},</if>
             <if test="data.total != null">total = #{data.total},</if>
             <if test="data.crc32 != null and data.crc32 != ''">crc32 = #{data.crc32},</if>
+            <if test="data.md5 != null and data.md5 != ''">md5 = #{data.md5},</if>
             <if test="data.sysCode != null and data.sysCode != ''">sys_code = #{data.sysCode},</if>
             <if test="data.sysAlisa != null and data.sysAlisa != ''">sys_alisa = #{data.sysAlisa},</if>
             <if test="data.status != null">status = #{data.status},</if>
@@ -190,6 +198,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 #{code}
             </foreach>
         </where>
+    </select>
+    
+    <select id="selectBySysCodeAndFileName" resultMap="LogicFileResult">
+        <include refid="selectLogicFileVo"/>
+        where sys_code = #{sysCode} and file_name = #{fileName} and status = 2
+        order by id desc limit 1
+    </select>
+
+    <select id="selectBySysCodeAndPrefix" resultMap="LogicFileResult">
+        <include refid="selectLogicFileVo"/>
+        where sys_code = #{sysCode} and status = 2
+        <if test="prefix != null and prefix != ''">
+            and file_name like concat(#{prefix}, '%')
+        </if>
+        order by id desc
     </select>
     
 </mapper>

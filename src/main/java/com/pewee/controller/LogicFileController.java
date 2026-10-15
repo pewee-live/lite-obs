@@ -1,16 +1,19 @@
 package com.pewee.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.pewee.bean.LogicFile;
-import com.pewee.bean.dto.DownloadLogicFileRespDto;
-import com.pewee.bean.dto.PreUploadDto;
-import com.pewee.bean.dto.SingleStreamDto;
-import com.pewee.bean.dto.UploadFileRespDto;
-import com.pewee.service.IFileService;
-import com.pewee.service.ILogicFileService;
-import com.pewee.util.resp.CommonRespInfo;
-import com.pewee.util.resp.RespEntity;
-import com.pewee.util.resp.ServiceException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -20,23 +23,32 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.Base64Utils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.alibaba.fastjson.JSON;
+import com.pewee.bean.LogicFile;
+import com.pewee.bean.dto.DownloadLogicFileRespDto;
+import com.pewee.bean.dto.LogicFileStausDTO;
+import com.pewee.bean.dto.PreUploadDto;
+import com.pewee.bean.dto.SingleStreamDto;
+import com.pewee.bean.dto.UploadFileRespDto;
+import com.pewee.service.IFileService;
+import com.pewee.service.ILogicFileService;
+import com.pewee.util.resp.CommonRespInfo;
+import com.pewee.util.resp.RespEntity;
+import com.pewee.util.resp.ServiceException;
+
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.params.SetParams;
-import javax.annotation.Nullable;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 逻辑文件Controller
@@ -62,6 +74,12 @@ public class LogicFileController {
     private JedisCluster jedisCluster;
 
     private static final String UPLOAD_PARTS_KEY = "com.pewee:obs:uploadPartKey:%s;%d";
+    
+    /**
+     * 限制分片最小为1B
+     */
+    private static final Long ONE_B = 1L;
+    
     /**
      * 限制分片最小为4KB
      */
@@ -70,6 +88,10 @@ public class LogicFileController {
      * 限制分片最大为16MB
      */
     private static final Long SIXTEEN_MB = 16 * 1024 * 1024L;
+    /**
+     * 限制分片最大为100MB
+     */
+    private static final Long HUNDRED_MB = 100 * 1024 * 1024L;
 
     /**
      * 查询逻辑文件列表
@@ -89,6 +111,26 @@ public class LogicFileController {
         List<LogicFile> list = logicFileService.selectLogicFileList(req);
         log.info("查询文件列表-完成 : {}", JSON.toJSONString(list));
         return new RespEntity<List<LogicFile>>().applyRespCodeMsg(CommonRespInfo.SUCCESS).applyData(list);
+    }
+    
+    /**
+     * 查询下载文件状态
+     */
+    @GetMapping(value = "/queryStatus/{code}")
+    public RespEntity<LogicFileStausDTO> getStatus(@RequestHeader(value = "sysAlias") String sysAlias, @RequestHeader(value = "forceStaticLink") @Nullable Boolean forceStaticLink,
+    		@PathVariable("code") String code) {
+        log.info("查询文件信息-开始 ,sysAlias : {} ,code : {} ", sysAlias, JSON.toJSONString(code));
+        Assert.notNull(sysAlias, "系统别名不能为空!");
+        LogicFile logicFile = logicFileService.selectLogicFileByCode(code);
+        Assert.notNull(logicFile, "該文件不存在");
+		/*
+		 * Assert.isTrue(logicFile.getStatus() == 2, "文件尚未上傳完成或已刪除");
+		 * Assert.isTrue(System.currentTimeMillis() < logicFile.getExpire().getTime(),
+		 * "文件已過期");
+		 */
+        LogicFileStausDTO result = logicFileService.getStatus(logicFile);
+        log.info("查询文件信息-完成: {}",JSON.toJSONString(result));
+        return new RespEntity<LogicFileStausDTO>().applyRespCodeMsg(CommonRespInfo.SUCCESS).applyData(result);
     }
 
 
@@ -257,10 +299,11 @@ public class LogicFileController {
             @Nullable @RequestParam(value = "crc32") String crc32,
             @Nullable @RequestParam(value="subCrcList") List<String> subCrcList,
             @Nullable @RequestParam(value = "expire") String expire,
+            @Nullable @RequestParam(value = "skipCrcCheck", required = false) Boolean skipCrcCheck,
             @Nullable @RequestHeader(value = "split") Integer split,
             @Nullable @RequestHeader(value = "total") Integer total
     ) {
-        log.info("预上传文件-开始, sysAlias : {}, sysCode: {}, filename : {}, mimeType : {}, length : {}, storageType : {}, crc32 : {}, expire : {}, split : {}, total:{}", sysAlias, sysCode, filename, mimeType, length, storageType, crc32, expire, split, total);
+    	log.info("预上传文件-开始, sysAlias : {}, sysCode: {}, filename : {}, mimeType : {}, length : {}, storageType : {}, crc32 : {}, expire : {}, split : {}, total:{}, skipCrcCheck:{}", sysAlias, sysCode, filename, mimeType, length, storageType, crc32, expire, split, total, skipCrcCheck);
         PreUploadDto preUploadDto = PreUploadDto
                 .builder()
                 .sysAlisa(sysAlias)
@@ -274,13 +317,14 @@ public class LogicFileController {
                 .total(total)
                 .build();
 
-        if (!checkSubCrcList(split,total,subCrcList)){
+        boolean isSkipCrc = Boolean.TRUE.equals(skipCrcCheck);
+        if (!isSkipCrc && !checkSubCrcList(split,total,subCrcList)){
             throw new IllegalArgumentException("subCrcList存在问题,请检查!");
         }
         LogicFile logicFile = preUploadDto.generateLogicFile();
         parseExpireAndSetToLogicFile(expire, logicFile);
         logicFile.setCreateTime(new Date());
-        logicFile = logicFileService.preupload(logicFile,subCrcList);
+        logicFile = logicFileService.preuploadWithOption(logicFile, subCrcList, isSkipCrc);
         return new RespEntity<String>().applyRespCodeMsg(CommonRespInfo.SUCCESS).applyData(logicFile.getCode());
     }
 
@@ -349,7 +393,7 @@ public class LogicFileController {
             Assert.isTrue(System.currentTimeMillis() < logicFile.getExpire().getTime(), "文件已過期");
             //分片从0号开始!!
             Assert.isTrue(logicFile.getTotal() >= sequence, "分片号不能大于文件总数");
-            Assert.isTrue(  file.getSize() <= SIXTEEN_MB, "分片大小必须<16MB!!");
+            Assert.isTrue(file.getSize() >=  ONE_B &&  file.getSize() <= HUNDRED_MB, "分片大小必须在1B-100MB之间!!");
             //同一个batchCode下的同一个序号文件防重!!上传失败会删除掉这个key
         	String key = String.format(UPLOAD_PARTS_KEY, code,sequence);
             String string = jedisCluster.set(key, "0", SetParams.setParams().nx().ex(60 * 60 * 24 * 7));

@@ -66,6 +66,10 @@ public class LogicFile implements Serializable {
 	@Column(name = "crc32")
     private String crc32;
 
+	/** MD5校验和  md5 */
+	@Column(name = "md5")
+    private String md5;
+
 	/** 系统编码  sys_code */
 	@Column(name = "sys_code")
     private String sysCode;

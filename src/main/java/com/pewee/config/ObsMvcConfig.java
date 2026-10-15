@@ -17,6 +17,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ObsMvcConfig implements WebMvcConfigurer {
     @Autowired
     private ObsAccessInterceptor accessInterceptor;
+    
+    @Autowired
+    private com.pewee.adaptor.s3.interceptor.S3SigV4AuthInterceptor s3SigV4AuthInterceptor;
+    
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(accessInterceptor).addPathPatterns("/**").excludePathPatterns("/obs/sys/register","/obs/sys/authorize","/obs/logicfile/download/**","/bdpan/token","/bdpan/login");

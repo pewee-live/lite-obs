@@ -68,4 +68,21 @@ public interface IFileService  extends com.pewee.service.IService<File> {
      * @return
      */
     List<File> selectFilesCodes(List<String> codes);
+
+    /**
+     * 上传单文件/分片字节数据到存储引擎
+     * @param engine 存储引擎
+     * @param singleFile 文件上下文
+     * @param file 字节数据
+     * @return fileCode
+     */
+    String upload(com.pewee.engine.EngineAccess engine, com.pewee.bean.SingleUploadFileContext singleFile, byte[] file);
+
+    /**
+     * 直接获取物理文件的存储流(绕过DynamicLink动态链接转码与计次)
+     * @param file 物理File对象
+     * @return 文件输入流
+     * @throws IOException
+     */
+    InputStream getDirectStream(File file) throws IOException;
 }

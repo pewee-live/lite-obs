@@ -1,15 +1,16 @@
 package com.pewee.service;
 
-import com.pewee.bean.LogicFile;
-import com.pewee.bean.dto.DownloadLogicFileRespDto;
-import com.pewee.bean.dto.MultiStreamDto;
-import com.pewee.bean.dto.SingleStreamDto;
-import com.pewee.engine.DynamicLink;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import com.pewee.bean.LogicFile;
+import com.pewee.bean.dto.DownloadLogicFileRespDto;
+import com.pewee.bean.dto.LogicFileStausDTO;
+import com.pewee.bean.dto.MultiStreamDto;
+import com.pewee.bean.dto.SingleStreamDto;
+import com.pewee.engine.DynamicLink;
 
 /**
  * 逻辑文件Service接口
@@ -126,4 +127,57 @@ public interface ILogicFileService  extends com.pewee.service.IService<LogicFile
 	public SingleStreamDto getMergeFileInfo(String code, Boolean dynamicLink);
 
 	public DynamicLink getDynamicLink();
+	
+	/**
+	 * 查询文件状态，以及上传了哪些分片
+	 * @param logicFile
+	 * @return
+	 */
+	public LogicFileStausDTO getStatus(LogicFile logicFile);
+	
+	/**
+	 * 根据系统编码与文件名(S3 Key)查询有效逻辑文件
+	 * @param sysCode
+	 * @param fileName
+	 * @return
+	 */
+	public LogicFile selectBySysCodeAndFileName(String sysCode, String fileName);
+
+	/**
+	 * 根据系统编码与前缀查询有效逻辑文件列表
+	 * @param sysCode
+	 * @param prefix
+	 * @return
+	 */
+	public List<LogicFile> selectBySysCodeAndPrefix(String sysCode, String prefix);
+
+	/**
+	 * 流式上传单一文件（S3 PutObject 或单文件直传，带覆盖写清理）
+	 * @param logicFile
+	 * @param stream
+	 * @param length
+	 * @param mimeType
+	 * @param originalFilename
+	 * @return fileCode
+	 */
+	public String uploadStream(LogicFile logicFile, java.io.InputStream stream, long length, String mimeType, String originalFilename);
+
+	/**
+	 * 增强版预上传，支持跳过CRC预校验（S3分片盲传模式）
+	 * @param logicFile
+	 * @param subCrcList
+	 * @param skipCrcCheck
+	 * @return LogicFile
+	 */
+	public LogicFile preuploadWithOption(LogicFile logicFile, List<String> subCrcList, boolean skipCrcCheck);
+
+	/**
+	 * 支持分片与不分片文件的 HTTP Range 字节流精准读取输出
+	 * @param logicFile
+	 * @param start 起始字节偏移(包含)
+	 * @param end 结束字节偏移(包含)
+	 * @param outputStream 输出流
+	 * @throws java.io.IOException
+	 */
+	public void writeRangeStream(LogicFile logicFile, long start, long end, java.io.OutputStream outputStream) throws java.io.IOException;
 }

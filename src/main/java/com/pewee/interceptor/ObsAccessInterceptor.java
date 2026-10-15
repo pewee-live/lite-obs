@@ -45,7 +45,16 @@ public class ObsAccessInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //获取access_token
+    	String uri = request.getRequestURI();
+        String authHeader = request.getHeader("Authorization");
+        // 如果是 S3 协议请求 (非 /opto 与非 /bdpan 开头，或者包含 AWS 签名头 / 预签名参数)，直接放行给 S3 拦截器处理
+        if ((!uri.startsWith("/opto/") && !uri.startsWith("/bdpan/"))
+                || (authHeader != null && authHeader.startsWith("AWS4-HMAC-SHA256"))
+                || request.getParameter("X-Amz-Signature") != null) {
+            return true;
+        }
+    	
+    	//获取access_token
         String accessToken = request.getHeader("Authorization");
         String sysCode = null;
         boolean notEmpty = StringUtils.hasText(accessToken);

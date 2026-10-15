@@ -87,4 +87,6 @@ public interface FileMapper extends com.pewee.util.MyMapper<File>
     public int deleteFileByIds(Long[] ids);
 
     List<File> selectFileListByBatchCodes(@Param("batchCodes") List<String> batchCodes);
+    
+    int updateBatchCode(@Param("oldBatchCode") String oldBatchCode, @Param("newBatchCode") String newBatchCode);
 }

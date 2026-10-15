@@ -169,4 +169,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
+    <update id="updateBatchCode">
+        update tbl_file set batch_code = #{newBatchCode} where batch_code = #{oldBatchCode}
+    </update>
 </mapper>

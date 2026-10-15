@@ -100,4 +100,22 @@ public interface LogicFileMapper extends com.pewee.util.MyMapper<LogicFile>
      * @return
      */
     public int logicallyDeleteLogicFileByCodes(@Param("codes") List<String> codes);
+    
+    /**
+     * 根据系统编码和文件名(S3 Key)查询有效逻辑文件
+     *
+     * @param sysCode 系统编码
+     * @param fileName 文件名(S3 Key)
+     * @return 逻辑文件
+     */
+    public LogicFile selectBySysCodeAndFileName(@Param("sysCode") String sysCode, @Param("fileName") String fileName);
+
+    /**
+     * 根据系统编码和文件名(S3 Key)前缀查询逻辑文件列表
+     *
+     * @param sysCode 系统编码
+     * @param prefix 文件名前缀
+     * @return 逻辑文件列表
+     */
+    public List<LogicFile> selectBySysCodeAndPrefix(@Param("sysCode") String sysCode, @Param("prefix") String prefix);
 }

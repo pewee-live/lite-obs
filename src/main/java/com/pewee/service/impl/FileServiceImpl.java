@@ -208,4 +208,11 @@ public class FileServiceImpl implements IFileService {
         criteria.andIn("code", codes);
         return selectByExample(example);
 	}
+	
+	@Override
+	public InputStream getDirectStream(File file) throws IOException {
+		Assert.notNull(file, "物理文件对象不能为空");
+		Assert.notNull(file.getStorageType(), "存储类型不能为空");
+		return engineRegistor.switchTo(file.getStorageType()).doGetStream(Lists.newArrayList(file)).get(0);
+	}
 }
