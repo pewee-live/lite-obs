@@ -226,6 +226,7 @@ public class LogicFileServiceImpl implements ILogicFileService {
             	//如果所有上传的分片其length之和与最初预上传文件时声明的length不符合,直接走删除
                 Long actualTotalSize = files.stream().mapToLong(File::getLength).sum();
                 LogicFile logicFileForHandle = new LogicFile();
+                logicFileForHandle.setId(var.getId());
                 boolean skipCrc = "1".equals(jedisCluster.get(String.format("com.pewee.obs:logic_file:skip_crc:%s", logicFileCode)));
                 if (expectedTotalSize == null || !expectedTotalSize.equals(actualTotalSize)){
                     if (skipCrc) {
